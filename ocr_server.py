@@ -9,8 +9,8 @@ from flask import Flask, request
 parser = argparse.ArgumentParser(description="使用ddddocr搭建的验证码识别API")
 parser.add_argument("-p", "--port", type=int, default=9898)
 parser.add_argument("--ocr", action="store_true", help="开启ocr识别")
-
-
+parser.add_argument("--old", action="store_true", help="OCR是否启动旧模型")
+parser.add_argument("--det", action="store_true", help="开启目标检测")
 args = parser.parse_args()
 
 app = Flask(__name__)
@@ -23,7 +23,6 @@ class Server(object):
         self.old_option = old
         self.ocr = None
         self.det = None
-        self.slide = None
         if self.ocr_option:
             print("ocr模块开启")
             if self.old_option:
@@ -55,7 +54,7 @@ class Server(object):
     def slide(self, target_img: bytes, bg_img: bytes, algo_type: str):
         dddd = self.ocr or self.det or ddddocr.DdddOcr(ocr=False)
         if algo_type == 'match':
-            return dddd.slide_match(target_img, bg_img)
+            return dddd.slide_match(target_img, bg_img, simple_target=True)
         elif algo_type == 'compare':
             return dddd.slide_comparison(target_img, bg_img)
         else:
@@ -63,6 +62,7 @@ class Server(object):
 
 server = Server(ocr=args.ocr, det=args.det, old=args.old)
 
+slideorc = ddddocr.DdddOcr(det=False, ocr=False)
 
 def get_img(request, img_type='file', img_name='image'):
     if img_type == 'b64':
@@ -113,6 +113,17 @@ def slide(algo_type='compare', img_type='file', ret_type='text'):
         target_img = get_img(request, img_type, 'target_img')
         bg_img = get_img(request, img_type, 'bg_img')
         result = server.slide(target_img, bg_img, algo_type)
+        return set_ret(result, ret_type)
+    except Exception as e:
+        return set_ret(e, ret_type)
+
+@app.route('/slide', methods=['POST'])
+def slide2(img_type='file', ret_type='text'):
+    try:
+        target_img = get_img(request, img_type, 'target_img')
+        bg_img = get_img(request, img_type, 'bg_img')
+        result = slideorc.slide_match(target_img, bg_img, simple_target=True)
+        print(result)
         return set_ret(result, ret_type)
     except Exception as e:
         return set_ret(e, ret_type)
