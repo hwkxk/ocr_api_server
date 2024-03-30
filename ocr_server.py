@@ -118,12 +118,11 @@ def slide(algo_type='compare', img_type='file', ret_type='text'):
         return set_ret(e, ret_type)
 
 @app.route('/slide', methods=['POST'])
-def slide2(img_type='file', ret_type='text'):
+def slide2(img_type='file', ret_type='json'):
     try:
         target_img = get_img(request, img_type, 'target_img')
         bg_img = get_img(request, img_type, 'bg_img')
         result = slideorc.slide_match(target_img, bg_img, simple_target=True)
-        print(result)
         return set_ret(result, ret_type)
     except Exception as e:
         return set_ret(e, ret_type)
