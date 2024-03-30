@@ -1,7 +1,7 @@
 # ocr_api_server
 使用ddddocr的最简api搭建项目，支持docker
 
-**建议python版本3.7-3.9 64位**
+**建议python版本<=3.9 64位**
 
 再有不好好看文档的我就不管了啊！！！
 
@@ -79,7 +79,7 @@ docker run -p 9898:9898 -d ocr_server:v1
 # resp = requests.post("http://{host}:{port}/det/b64/json", data=base64.b64encode(file).decode())
 
 # 滑块识别请求
-# resp = requests.post("http://{host}:{port}/slide/match/file", files={'target_img': target_bytes, 'bg_img': bg_bytes})
-# jsonstr = json.dumps({'target_img': target_b64str, 'bg_img': bg_b64str})
-# resp = requests.post("http://{host}:{port}/slide/compare/b64", files=base64.b64encode(jsonstr.encode()).decode())
+# api_url = f"{host}/slide"
+# resp = requests.post(api_url, files={'target_img': target_bytes, 'bg_img': background_bytes})
+# print(f"{api_url=}, {resp.text=}")
 ```
