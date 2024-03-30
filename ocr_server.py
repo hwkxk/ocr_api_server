@@ -6,11 +6,10 @@ import json
 import ddddocr
 from flask import Flask, request
 
-parser = argparse.ArgumentParser(description="使用ddddocr搭建的最简api服务")
+parser = argparse.ArgumentParser(description="使用ddddocr搭建的验证码识别API")
 parser.add_argument("-p", "--port", type=int, default=9898)
 parser.add_argument("--ocr", action="store_true", help="开启ocr识别")
-parser.add_argument("--old", action="store_true", help="OCR是否启动旧模型")
-parser.add_argument("--det", action="store_true", help="开启目标检测")
+
 
 args = parser.parse_args()
 
@@ -24,6 +23,7 @@ class Server(object):
         self.old_option = old
         self.ocr = None
         self.det = None
+        self.slide = None
         if self.ocr_option:
             print("ocr模块开启")
             if self.old_option:
